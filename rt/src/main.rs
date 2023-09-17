@@ -1,6 +1,8 @@
-use rt_lib::add;
+use rt_lib::Engine;
 
 fn main() {
-    println!("{}",add(1,2));
     println!("Hello, world!");
+    let mut eng= Engine::init(256,256);
+    eng.run();
+    eng.save();
 }
