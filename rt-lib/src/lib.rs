@@ -1,5 +1,6 @@
 pub mod util;
 pub mod camera;
+pub mod geometry;
 
 use camera::Camera;
 use glam::{UVec2, Vec3, vec3, uvec2};
