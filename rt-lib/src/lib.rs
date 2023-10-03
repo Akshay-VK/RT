@@ -19,19 +19,8 @@ impl Engine{
         self.state.world.add(obj);
     }
     pub fn run(&mut self)->bool{
-        //let mut img = vec!(vec!(vec3(0.0, 0.0, 0.0);self.state.dim.x as usize);self.state.dim.y as usize);
-        //let mut w=&self.state.world;
         self.state.cam.initialize();
         let w=&self.state.world;
-        //let w=self.state.world;
-        /*img.par_iter_mut().enumerate().for_each(|x| {
-            let y=x.0;
-            x.1.iter_mut().enumerate().for_each(|x|{
-                //println!("{}  ,  {}",x.0,y);
-                let c=self.state.cam.render_pixel(x.0 as f32, y as f32,&Box::new(self.state.world));
-                *x.1=c;
-            });
-        });*/
         for y in 0..self.state.img.len(){
             /*img[y].par_iter_mut().enumerate().for_each(|x|{
                 //println!("{}  ,  {}",x.0,y);
@@ -39,7 +28,10 @@ impl Engine{
                 *x.1=c;
             });*/
             for x in 0..self.state.img[y].len(){
-                let c=self.state.cam.render_pixel(x as f32, y as f32,w);
+                let mut c=self.state.cam.render_pixel(x as f32, y as f32,w);
+                let scale = 1.0/(self.state.cam.samples_per_pixel as f32);
+                c*=scale;
+                c=vec3(c.x.sqrt(), c.y.sqrt(), c.z.sqrt());
                 self.state.img[y][x]=c;
             }
         }
@@ -48,9 +40,9 @@ impl Engine{
     pub fn save(&self){
         let img = ImageBuffer::from_fn(self.state.dim.x, self.state.dim.y, |x, y| {
             let e:Vec3=self.state.img[y as usize][x as usize];
-            let r=(e.x*255.0) as u8;
-            let g=(e.y*255.0) as u8;
-            let b=(e.z*255.0) as u8;
+            let r=(e.x.clamp(0.0, 0.999)*255.0) as u8;
+            let g=(e.y.clamp(0.0, 0.999)*255.0) as u8;
+            let b=(e.z.clamp(0.0, 0.999)*255.0) as u8;
             image::Rgb([r,g,b])
         });
         img.save("render.png").unwrap();
