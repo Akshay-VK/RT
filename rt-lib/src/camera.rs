@@ -1,6 +1,6 @@
 use glam::{UVec2, Vec3, vec3, uvec2, vec2};
 
-use crate::{util::util::Ray, geometry::geometry::{HitRecord, Sphere, Hittable}};
+use crate::{util::util::Ray, geometry::geometry::{HitRecord, Sphere, Hittable, HittableList}};
 
 pub struct Camera{
     pub aspect_ratio:f32,
@@ -37,18 +37,18 @@ impl Camera {
 
         self.pixel00=view_up_left+((self.pixel_du+self.pixel_dv)*0.5);
     }
-    pub fn render_pixel(&self,i:f32,j:f32)->Vec3{
+    pub fn render_pixel(&self,i:f32,j:f32, world: &Box<HittableList>)->Vec3{
         let pixel_c=self.pixel00+(self.pixel_du*i)+(self.pixel_dv*j);
         let r_dir=pixel_c-self.center;
         let r=Ray::new(self.center, r_dir);
-        let color=self.render_ray(&r);
+        let color=self.render_ray(&r,world);
         color
     }
-    fn render_ray(&self,r:&Ray)->Vec3{
-        let sphere=Sphere::new(vec3(0.0, 0.0, -1.0), 0.5);
+    fn render_ray(&self,r:&Ray, world: &Box<HittableList>)->Vec3{
+        //let sphere=Sphere::new(vec3(0.0, 0.0, -1.0), 0.5);
 
-        let mut rec:HitRecord=HitRecord { p: Vec3::ZERO, normal: Vec3::ZERO, t: 0.0 };
-        if sphere.hit(&r, vec2(0.0, f32::MAX), &mut rec){
+        let mut rec:HitRecord=HitRecord { p: Vec3::ZERO, normal: Vec3::ZERO, t: 0.0 , front_face: true};
+        if world.hit(&r, vec2(0.0, f32::MAX), &mut rec){
             return (rec.normal+vec3(1.0, 1.0, 1.0))*0.5;
         }
 
