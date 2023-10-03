@@ -37,14 +37,14 @@ impl Camera {
 
         self.pixel00=view_up_left+((self.pixel_du+self.pixel_dv)*0.5);
     }
-    pub fn render_pixel(&self,i:f32,j:f32, world: &Box<HittableList>)->Vec3{
+    pub fn render_pixel(&self,i:f32,j:f32, world: &HittableList)->Vec3{
         let pixel_c=self.pixel00+(self.pixel_du*i)+(self.pixel_dv*j);
         let r_dir=pixel_c-self.center;
         let r=Ray::new(self.center, r_dir);
         let color=self.render_ray(&r,world);
         color
     }
-    fn render_ray(&self,r:&Ray, world: &Box<HittableList>)->Vec3{
+    fn render_ray(&self,r:&Ray, world: &HittableList)->Vec3{
         //let sphere=Sphere::new(vec3(0.0, 0.0, -1.0), 0.5);
 
         let mut rec:HitRecord=HitRecord { p: Vec3::ZERO, normal: Vec3::ZERO, t: 0.0 , front_face: true};

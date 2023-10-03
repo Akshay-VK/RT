@@ -10,6 +10,8 @@ fn main() {
     let sphere2=Box::new(Sphere::new((0.0,-100.5,-1.0), 100.0));
     
     //
+    eng.add_object(sphere1);
+    eng.add_object(sphere2);
     eng.run();
     eng.save();
 }
